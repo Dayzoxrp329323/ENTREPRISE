@@ -1,1 +1,935 @@
+from pathlib import Path
+import zipfile, shutil
+
+src = Path("/mnt/data/d44ca864-5e5a-488a-8f1c-d2b1399ab2e2.jpeg")
+out = Path("/mnt/data/MJCLEAN_site")
+out.mkdir(exist_ok=True)
+
+# Copy the uploaded welcome image under the filename used by the HTML.
+welcome = out / "accueil-mjclean.jpg"
+shutil.copy2(src, welcome)
+
+html = r'''<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MJ.CLEAN — 26-7 Multiservices. Nettoyage, débarras et entretien à Valence et alentours.">
+  <title>MJ.CLEAN — 26-7 Multiservices</title>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      color: #18324a;
+      background: #f6fbff;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    :root {
+      --blue: #0d5ea8;
+      --dark: #123a5a;
+      --light: #eef8ff;
+      --cyan: #18a7d5;
+      --white: #fff;
+      --shadow: 0 12px 35px rgba(13, 94, 168, .12);
+    }
+
+    .container {
+      width: min(1150px, 92%);
+      margin: auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,.97);
+      box-shadow: 0 2px 18px rgba(0,0,0,.08);
+    }
+
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      color: var(--blue);
+      font-size: 1.35rem;
+    }
+
+    .brand-dot {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      box-shadow: 0 7px 18px rgba(13,94,168,.25);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    nav a {
+      font-weight: 700;
+      font-size: .95rem;
+      color: #31516b;
+    }
+
+    nav a:hover { color: var(--blue); }
+
+    .hero {
+      min-height: 650px;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 50px;
+      align-items: center;
+      padding: 70px 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(24,167,213,.16), transparent 35%),
+        linear-gradient(135deg, #f8fdff, #e9f7ff);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.7rem, 6vw, 5.4rem);
+      line-height: .98;
+      color: var(--dark);
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+    }
+
+    .hero h1 span { color: var(--blue); }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: #4e6578;
+      max-width: 620px;
+      margin-bottom: 28px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 9px 15px;
+      border-radius: 999px;
+      background: white;
+      color: var(--blue);
+      font-weight: 800;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 800;
+      transition: .2s ease;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 10px 22px rgba(13,94,168,.22);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--blue);
+      border: 2px solid #d6e9f6;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .hero-photo {
+      background: white;
+      padding: 12px;
+      border-radius: 28px;
+      box-shadow: 0 22px 60px rgba(13,94,168,.20);
+      transform: rotate(1deg);
+    }
+
+    .hero-photo img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 20px;
+    }
+
+    .trust {
+      background: var(--dark);
+      color: white;
+      padding: 24px 0;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      text-align: center;
+    }
+
+    .trust strong { display: block; font-size: 1.1rem; }
+    .trust span { opacity: .8; font-size: .9rem; }
+
+    section { padding: 90px 0; }
+
+    .section-head {
+      max-width: 720px;
+      margin: 0 auto 45px;
+      text-align: center;
+    }
+
+    .section-head .mini {
+      color: var(--blue);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      font-size: .85rem;
+      margin-bottom: 8px;
+    }
+
+    .section-head h2 {
+      color: var(--dark);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.1;
+      margin-bottom: 13px;
+    }
+
+    .section-head p { color: #607487; }
+
+    .services {
+      background: white;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e1eef6;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: #e9f7ff;
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+    }
+
+    .card h3 { color: var(--dark); margin-bottom: 9px; }
+    .card p { color: #64788a; }
+
+    .feature {
+      background: #f1f9fe;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    .feature-img {
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .feature-img img {
+      width: 100%;
+      height: 450px;
+      object-fit: cover;
+    }
+
+    .feature h2 {
+      color: var(--dark);
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+
+    .feature p { color: #607487; margin-bottom: 20px; }
+
+    .checks {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .checks li {
+      background: white;
+      padding: 13px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      color: #36556d;
+    }
+
+    .checks li::before {
+      content: "✓";
+      color: var(--blue);
+      font-weight: 900;
+      margin-right: 10px;
+    }
+
+    .before-after {
+      background: white;
+    }
+
+    .ba-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .ba-card {
+      border: 1px solid #deedf6;
+      border-radius: 20px;
+      overflow: hidden;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .ba-images {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .ba-images img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+    }
+
+    .ba-label {
+      position: relative;
+      margin-top: -36px;
+      z-index: 2;
+      display: flex;
+      justify-content: space-around;
+      pointer-events: none;
+    }
+
+    .ba-label span {
+      background: rgba(18,58,90,.88);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    .ba-text { padding: 20px; }
+    .ba-text h3 { color: var(--dark); margin-bottom: 7px; }
+    .ba-text p { color: #667b8c; }
+
+    .gallery {
+      background: #f1f9fe;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr .9fr;
+      grid-auto-rows: 220px;
+      gap: 16px;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 18px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.08);
+    }
+
+    .gallery-grid img:first-child {
+      grid-row: span 2;
+    }
+
+    .reviews {
+      background: white;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .review {
+      padding: 28px;
+      background: #f7fbfe;
+      border: 1px solid #e2eef6;
+      border-radius: 18px;
+    }
+
+    .stars {
+      color: #f2b400;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .review p { color: #607487; margin-bottom: 16px; }
+    .review strong { color: var(--dark); }
+
+    .contact {
+      background: var(--dark);
+      color: white;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 45px;
+      align-items: start;
+    }
+
+    .contact h2 {
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+
+    .contact-intro { color: #c8dbe9; margin-bottom: 25px; }
+
+    .contact-list {
+      list-style: none;
+      display: grid;
+      gap: 15px;
+    }
+
+    .contact-list li {
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 12px;
+      background: rgba(255,255,255,.05);
+    }
+
+    .contact-list strong { display: block; margin-bottom: 3px; }
+
+    form {
+      background: white;
+      padding: 28px;
+      border-radius: 20px;
+      color: var(--dark);
+      box-shadow: 0 20px 50px rgba(0,0,0,.15);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 7px;
+      font-size: .9rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid #d8e7f0;
+      border-radius: 10px;
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+      margin-bottom: 16px;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--blue);
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    footer {
+      background: #0a2d47;
+      color: #c9d9e5;
+      padding: 28px 0;
+      text-align: center;
+      font-size: .92rem;
+    }
+
+    .footer-brand {
+      color: white;
+      font-weight: 900;
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .feature-grid,
+      .contact-grid { grid-template-columns: 1fr; }
+
+      .hero-photo { order: -1; }
+      .hero-photo img { height: 430px; }
+
+      .cards,
+      .review-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .trust-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 650px) {
+      .nav {
+        padding: 12px 0;
+        flex-direction: column;
+      }
+
+      nav ul { gap: 10px 15px; }
+
+      section { padding: 65px 0; }
+
+      .cards,
+      .review-grid,
+      .ba-grid,
+      .trust-grid,
+      .form-row { grid-template-columns: 1fr; }
+
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 180px;
+      }
+
+      .gallery-grid img:first-child {
+        grid-row: span 1;
+        grid-column: span 2;
+      }
+
+      .hero { padding-top: 40px; }
+      .hero-photo img { height: 360px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== MENU ===================== -->
+  <header>
+    <div class="container nav">
+      <a href="#accueil" class="brand">
+        <span class="brand-dot">✦</span>
+        MJ.CLEAN
+      </a>
+
+      <nav>
+        <ul>
+          <li><a href="#accueil">Accueil</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#avant-apres">Avant / Après</a></li>
+          <li><a href="#galerie">Galerie</a></li>
+          <li><a href="#avis">Avis</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===================== ACCUEIL ===================== -->
+  <main id="accueil">
+    <section class="hero">
+      <div class="container hero" style="padding-top:0;padding-bottom:0;">
+        <div>
+          <div class="badge">26-7 Multiservices • Nettoyage & Débarras</div>
+
+          <h1>Un espace <span>propre</span>,<br>un résultat qui se voit.</h1>
+
+          <p class="tagline">
+            MJ.CLEAN vous accompagne pour le nettoyage, l'entretien,
+            le débarras et la remise en état à Valence et alentours.
+          </p>
+
+          <div class="buttons">
+            <a class="btn btn-primary" href="#contact">Nous contacter</a>
+            <a class="btn btn-secondary" href="#services">Voir nos services</a>
+          </div>
+        </div>
+
+        <div class="hero-photo">
+          <!-- PHOTO D'ACCUEIL : c'est la photo que tu m'as envoyée. -->
+          <!-- Le fichier doit s'appeler exactement : accueil-mjclean.jpg -->
+          <img src="accueil-mjclean.jpg" alt="MJ.CLEAN — 26-7 Multiservices">
+        </div>
+      </div>
+    </section>
+
+    <div class="trust">
+      <div class="container trust-grid">
+        <div><strong>Nettoyage</strong><span>Particuliers & professionnels</span></div>
+        <div><strong>Débarras</strong><span>Tri et évacuation</span></div>
+        <div><strong>Multiservices</strong><span>Solutions adaptées</span></div>
+        <div><strong>Valence</strong><span>Drôme et alentours</span></div>
+      </div>
+    </div>
+
+    <!-- ===================== SERVICES ===================== -->
+    <section class="services" id="services">
+      <div class="container">
+        <div class="section-head">
+          <div class="mini">Nos prestations</div>
+          <h2>Des services de nettoyage pour chaque besoin</h2>
+          <p>
+            Une intervention soignée, adaptée aux logements, bureaux,
+            commerces et locaux.
+          </p>
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <div class="icon">🏠</div>
+            <h3>Nettoyage intérieur</h3>
+            <p>Entretien des pièces, sols, surfaces et espaces de vie.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🏢</div>
+            <h3>Bureaux & commerces</h3>
+            <p>Nettoyage des espaces professionnels et zones d'accueil.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🪟</div>
+            <h3>Lavage des vitres</h3>
+            <p>Vitres et surfaces vitrées pour un résultat net et lumineux.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">✨</div>
+            <h3>Grand nettoyage</h3>
+            <p>Remise en état et nettoyage approfondi des espaces.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🧽</div>
+            <h3>Entretien régulier</h3>
+            <p>Des passages ponctuels ou réguliers selon vos besoins.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🚚</div>
+            <h3>Débarras</h3>
+            <p>Débarras et évacuation des objets et encombrants.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PHOTO MILIEU ===================== -->
+    <section class="feature">
+      <div class="container feature-grid">
+        <div class="feature-img">
+          <!-- PHOTO DU MILIEU DU SITE : tu peux la remplacer ici si tu veux. -->
+          <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1200&q=85"
+               alt="Nettoyage professionnel">
+        </div>
+
+        <div>
+          <div class="section-head" style="text-align:left;margin:0 0 20px;">
+            <div class="mini">MJ.CLEAN</div>
+            <h2>La propreté, jusque dans les détails.</h2>
+          </div>
+
+          <p>
+            Notre objectif est simple : vous laisser un espace propre,
+            agréable et prêt à être utilisé.
+          </p>
+
+          <ul class="checks">
+            <li>Travail soigné</li>
+            <li>Interventions adaptées à vos besoins</li>
+            <li>Particuliers et professionnels</li>
+            <li>Nettoyage et débarras</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== AVANT / APRES ===================== -->
+    <section class="before-after" id="avant-apres">
+      <div class="container">
+        <div class="section-head">
+          <div class="mini">Vos réalisations</div>
+          <h2>Avant / Après</h2>
+          <p>
+            Remplace les images ci-dessous par tes propres photos
+            pour montrer les résultats de MJ.CLEAN.
+          </p>
+        </div>
+
+        <div class="ba-grid">
+
+          <article class="ba-card">
+            <div class="ba-images">
+              <!-- 👉 PHOTO AVANT 1 : remplace "avant1.jpg" par ta photo -->
+              <img src="avant1.jpg" alt="Avant nettoyage 1">
+
+              <!-- 👉 PHOTO APRÈS 1 : remplace "apres1.jpg" par ta photo -->
+              <img src="apres1.jpg" alt="Après nettoyage 1">
+            </div>
+            <div class="ba-label">
+              <span>AVANT</span><span>APRÈS</span>
+            </div>
+            <div class="ba-text">
+              <h3>Remise en état</h3>
+              <p>Ajoute ici une courte description de ton intervention.</p>
+            </div>
+          </article>
+
+          <article class="ba-card">
+            <div class="ba-images">
+              <!-- 👉 PHOTO AVANT 2 -->
+              <img src="avant2.jpg" alt="Avant nettoyage 2">
+
+              <!-- 👉 PHOTO APRÈS 2 -->
+              <img src="apres2.jpg" alt="Après nettoyage 2">
+            </div>
+            <div class="ba-label">
+              <span>AVANT</span><span>APRÈS</span>
+            </div>
+            <div class="ba-text">
+              <h3>Nettoyage approfondi</h3>
+              <p>Ajoute ici une courte description de ton intervention.</p>
+            </div>
+          </article>
+
+          <article class="ba-card">
+            <div class="ba-images">
+              <!-- 👉 PHOTO AVANT 3 -->
+              <img src="avant3.jpg" alt="Avant nettoyage 3">
+
+              <!-- 👉 PHOTO APRÈS 3 -->
+              <img src="apres3.jpg" alt="Après nettoyage 3">
+            </div>
+            <div class="ba-label">
+              <span>AVANT</span><span>APRÈS</span>
+            </div>
+            <div class="ba-text">
+              <h3>Nettoyage des surfaces</h3>
+              <p>Ajoute ici une courte description de ton intervention.</p>
+            </div>
+          </article>
+
+          <article class="ba-card">
+            <div class="ba-images">
+              <!-- 👉 PHOTO AVANT 4 -->
+              <img src="avant4.jpg" alt="Avant nettoyage 4">
+
+              <!-- 👉 PHOTO APRÈS 4 -->
+              <img src="apres4.jpg" alt="Après nettoyage 4">
+            </div>
+            <div class="ba-label">
+              <span>AVANT</span><span>APRÈS</span>
+            </div>
+            <div class="ba-text">
+              <h3>Débarras & nettoyage</h3>
+              <p>Ajoute ici une courte description de ton intervention.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== GALERIE ===================== -->
+    <section class="gallery" id="galerie">
+      <div class="container">
+        <div class="section-head">
+          <div class="mini">Galerie</div>
+          <h2>Quelques exemples de nettoyage</h2>
+          <p>Tu peux remplacer ces photos par tes propres réalisations.</p>
+        </div>
+
+        <div class="gallery-grid">
+          <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=85" alt="Nettoyage professionnel">
+          <img src="https://images.unsplash.com/photo-1585421514738-01798e348b17?auto=format&fit=crop&w=900&q=85" alt="Entretien">
+          <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=900&q=85" alt="Nettoyage intérieur">
+          <img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=85" alt="Cuisine propre">
+          <img src="https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=900&q=85" alt="Nettoyage maison">
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== AVIS ===================== -->
+    <section class="reviews" id="avis">
+      <div class="container">
+        <div class="section-head">
+          <div class="mini">Avis clients</div>
+          <h2>La satisfaction au cœur du travail</h2>
+          <p>Tu peux remplacer ces exemples par les vrais avis de tes clients.</p>
+        </div>
+
+        <div class="review-grid">
+          <article class="review">
+            <div class="stars">★★★★★</div>
+            <p>“Très bon travail, sérieux et résultat très propre.”</p>
+            <strong>Client MJ.CLEAN</strong>
+          </article>
+
+          <article class="review">
+            <div class="stars">★★★★★</div>
+            <p>“Intervention efficace et espace parfaitement nettoyé.”</p>
+            <strong>Client MJ.CLEAN</strong>
+          </article>
+
+          <article class="review">
+            <div class="stars">★★★★★</div>
+            <p>“Service professionnel et travail soigné.”</p>
+            <strong>Client MJ.CLEAN</strong>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section class="contact" id="contact">
+      <div class="container contact-grid">
+
+        <div>
+          <div class="badge">Contact MJ.CLEAN</div>
+          <h2>Un besoin de nettoyage ou de débarras ?</h2>
+          <p class="contact-intro">
+            Contactez-nous pour présenter votre besoin et organiser votre intervention.
+          </p>
+
+          <ul class="contact-list">
+            <li>
+              <strong>📞 Téléphone</strong>
+              <a href="tel:0640713183">06 40 71 31 83</a>
+            </li>
+
+            <li>
+              <strong>✉️ Email</strong>
+              <a href="mailto:Mijmoh86@gmail.com">Mijmoh86@gmail.com</a>
+            </li>
+
+            <li>
+              <strong>📍 Adresse</strong>
+              28A avenue de l'Yser, 26000 Valence
+            </li>
+          </ul>
+        </div>
+
+        <form id="contactForm">
+          <h3 style="margin-bottom:18px;">Envoyer un message</h3>
+
+          <div class="form-row">
+            <div>
+              <label for="nom">Nom</label>
+              <input id="nom" name="nom" type="text" placeholder="Votre nom" required>
+            </div>
+
+            <div>
+              <label for="telephone">Téléphone</label>
+              <input id="telephone" name="telephone" type="tel" placeholder="Votre téléphone">
+            </div>
+          </div>
+
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="Votre email" required>
+
+          <label for="message">Votre demande</label>
+          <textarea id="message" name="message" placeholder="Expliquez votre besoin..." required></textarea>
+
+          <button class="btn btn-primary" type="submit">Préparer l'email</button>
+
+          <p style="font-size:.82rem;color:#718394;margin-top:12px;">
+            Le bouton ouvre votre application email avec le message préparé.
+          </p>
+        </form>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== PIED DE PAGE ===================== -->
+  <footer>
+    <div class="container">
+      <div class="footer-brand">MJ.CLEAN — 26-7 Multiservices</div>
+      <div>Nettoyage • Débarras • Entretien</div>
+      <div style="margin-top:8px;">28A avenue de l'Yser, 26000 Valence</div>
+      <div style="margin-top:5px;">06 40 71 31 83 • Mijmoh86@gmail.com</div>
+      <div style="margin-top:14px;opacity:.7;">© <span id="year"></span> MJ.CLEAN — Tous droits réservés.</div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    document.getElementById("contactForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const nom = document.getElementById("nom").value.trim();
+      const telephone = document.getElementById("telephone").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const message = document.getElementById("message").value.trim();
+
+      const subject = encodeURIComponent("Demande de contact - MJ.CLEAN");
+      const body = encodeURIComponent(
+        "Bonjour MJ.CLEAN,\n\n" +
+        "Nom : " + nom + "\n" +
+        "Téléphone : " + telephone + "\n" +
+        "Email : " + email + "\n\n" +
+        "Demande :\n" + message
+      );
+
+      window.location.href =
+        "mailto:Mijmoh86@gmail.com?subject=" + subject + "&body=" + body;
+    });
+  </script>
+
+</body>
+</html>
+'''
+
+(out / "index.html").write_text(html, encoding="utf-8")
+
+zip_path = Path("/mnt/data/MJCLEAN_site_complet.zip")
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    z.write(out / "index.html", "index.html")
+    z.write(out / "accueil-mjclean.jpg", "accueil-mjclean.jpg")
+
+print(f"Fichiers créés : {zip_path}")
+print("Le ZIP contient index.html + accueil-mjclean.jpg.")
 
