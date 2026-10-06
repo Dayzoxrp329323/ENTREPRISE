@@ -1,258 +1,1853 @@
-from pathlib import Path
-import shutil, zipfile, base64
-
-# Uploaded images
-img1 = Path("/mnt/data/6c71d249-a609-49ab-9f40-295aa3212219(1).jpg")
-img2 = Path("/mnt/data/image0.jpg")
-
-out = Path("/mnt/data/MJ-CLEAN-26-07-professionnel")
-out.mkdir(exist_ok=True)
-
-shutil.copy2(img1, out / "accueil.jpg")
-shutil.copy2(img2, out / "avant-apres.jpg")
-
-# Embed the supplied images directly in the HTML as base64 so the photo section
-# cannot appear empty because of a broken relative path.
-def data_uri(path):
-    mime = "image/jpeg"
-    b64 = base64.b64encode(path.read_bytes()).decode("ascii")
-    return f"data:{mime};base64,{b64}"
-
-hero_img = data_uri(img1)
-before_after_img = data_uri(img2)
-
-html = f'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="MJ.CLEAN 26-07 - Multiservices, nettoyage et débarras à Valence.">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<meta name="description"
+content="MJ.CLEAN 26-07 - Multiservices, nettoyage et débarras à Valence.">
+
 <title>MJ.CLEAN 26-07 | Nettoyage & Débarras</title>
+
+
 <style>
-:root{{--blue:#063b78;--blue-dark:#032650;--blue-light:#10a8d1;--cyan:#59d8ec;--white:#fff;--light:#f4f8fc;--gray:#68798b;--dark:#071a30;--shadow:0 20px 60px rgba(3,38,80,.13)}}
-*{{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth}}
-body{{font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--dark);line-height:1.6}}
-a{{text-decoration:none;color:inherit}}
-.container{{width:min(1180px,92%);margin:auto}}
-header{{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.94);backdrop-filter:blur(15px);border-bottom:1px solid rgba(0,0,0,.06)}}
-.nav{{height:78px;display:flex;align-items:center;justify-content:space-between;gap:30px}}
-.logo{{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:1000;color:var(--blue)}}
-.logo-box{{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--blue-light));color:white;font-size:21px}}
-.logo span{{color:var(--blue-light)}}
-nav{{display:flex;align-items:center;gap:28px}}
-nav a{{font-size:14px;font-weight:800}}
-nav a:hover{{color:var(--blue-light)}}
-.header-phone{{padding:12px 18px;border-radius:50px;color:white;font-weight:900;font-size:14px;background:linear-gradient(135deg,var(--blue),var(--blue-light));box-shadow:0 8px 22px rgba(6,59,120,.22)}}
-.hero{{min-height:100vh;padding-top:78px;display:flex;align-items:center;position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(2,25,52,.94),rgba(3,57,105,.70),rgba(4,95,130,.48)),url("{hero_img}") center/cover no-repeat}}
-.hero-content{{position:relative;z-index:2;max-width:780px;color:white;padding:80px 0}}
-.hero-label{{display:inline-flex;padding:9px 15px;border-radius:50px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.25);font-size:13px;font-weight:900;letter-spacing:1px}}
-.hero h1{{font-size:clamp(48px,8vw,90px);line-height:.93;letter-spacing:-4px;margin:25px 0}}
-.hero h1 span{{color:var(--cyan)}}
-.hero-text{{font-size:clamp(18px,2.3vw,22px);max-width:690px;color:#e9f8ff}}
-.hero-buttons,.contact-buttons{{display:flex;flex-wrap:wrap;gap:13px;margin-top:32px}}
-.btn{{min-height:54px;padding:0 24px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;transition:.25s}}
-.btn:hover{{transform:translateY(-3px)}}
-.btn-primary{{background:linear-gradient(135deg,var(--cyan),var(--blue-light));color:#032c51}}
-.btn-white{{background:white;color:var(--blue)}}
-section{{padding:100px 0}}
-.section-heading{{text-align:center;max-width:750px;margin:0 auto 55px}}
-.section-heading small{{display:block;color:var(--blue-light);font-size:12px;font-weight:1000;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}}
-.section-heading h2{{font-size:clamp(36px,5vw,58px);line-height:1;letter-spacing:-2px;margin-bottom:15px}}
-.section-heading p{{color:var(--gray);font-size:17px}}
-.services{{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}}
-.service{{background:white;border:1px solid #e6edf3;border-radius:25px;padding:32px;box-shadow:var(--shadow);transition:.3s}}
-.service:hover{{transform:translateY(-8px)}}
-.service-icon{{width:62px;height:62px;display:grid;place-items:center;border-radius:18px;background:#e6faff;font-size:29px;margin-bottom:22px}}
-.service h3{{font-size:22px;margin-bottom:10px}}
-.service p{{color:var(--gray)}}
-.stats{{background:linear-gradient(135deg,var(--blue),#087cae);color:white}}
-.stats-grid{{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}}
-.stat{{text-align:center;padding:25px;border-right:1px solid rgba(255,255,255,.18)}}
-.stat:last-child{{border-right:0}}
-.stat strong{{display:block;font-size:40px;color:var(--cyan)}}
-.stat span{{font-weight:700}}
-.gallery-section{{background:#edf5fa}}
-.before-after{{display:grid;grid-template-columns:1fr 1fr;gap:25px}}
-.photo-card{{background:white;border-radius:25px;overflow:hidden;box-shadow:var(--shadow)}}
-.photo-header{{padding:17px;text-align:center;font-size:19px;font-weight:1000;letter-spacing:2px}}
-.before{{background:var(--blue);color:white}}
-.after{{background:linear-gradient(135deg,var(--blue-light),var(--cyan));color:#032c51}}
-.photo-card img{{width:100%;height:500px;object-fit:cover}}
-.photo-note{{padding:18px;text-align:center;color:var(--gray);font-weight:700}}
-.why{{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}}
-.why-image{{border-radius:30px;overflow:hidden;box-shadow:var(--shadow)}}
-.why-image img{{width:100%;height:550px;object-fit:cover}}
-.features{{display:grid;gap:22px}}
-.feature{{display:flex;gap:17px;align-items:flex-start}}
-.feature-icon{{width:48px;height:48px;flex-shrink:0;display:grid;place-items:center;border-radius:14px;background:#e6f8fc;font-size:22px}}
-.feature h3{{margin-bottom:4px}}
-.feature p{{color:var(--gray)}}
-.contact{{background:linear-gradient(135deg,#032650,#087fae);color:white}}
-.contact-wrapper{{display:grid;grid-template-columns:1fr 1fr;gap:25px}}
-.contact-main,.contact-info{{padding:40px;border-radius:28px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18)}}
-.contact-main h2{{font-size:45px;line-height:1;margin-bottom:17px}}
-.contact-main p{{color:#d9f4ff;font-size:17px}}
-.contact-item{{padding:20px 0;border-bottom:1px solid rgba(255,255,255,.16)}}
-.contact-item:last-child{{border-bottom:0}}
-.contact-item small{{display:block;color:var(--cyan);font-weight:900;margin-bottom:5px}}
-footer{{background:#021326;color:#9eb2c5;text-align:center;padding:35px 0;font-size:14px}}
-@media(max-width:850px){{nav{{display:none}}.services,.before-after,.why,.contact-wrapper{{grid-template-columns:1fr}}.stats-grid{{grid-template-columns:1fr 1fr}}.stat{{border-right:0;border-bottom:1px solid rgba(255,255,255,.15)}}.photo-card img{{height:400px}}.why-image img{{height:400px}}}}
-@media(max-width:500px){{.header-phone{{display:none}}section{{padding:75px 0}}.hero h1{{letter-spacing:-2px}}.hero-buttons .btn,.contact-buttons .btn{{width:100%}}.stats-grid{{grid-template-columns:1fr}}.photo-card img{{height:300px}}.contact-main,.contact-info{{padding:28px}}}}
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+:root{
+
+--blue:#063b78;
+--blue-dark:#032650;
+--blue-light:#10a8d1;
+--cyan:#59d8ec;
+
+--white:#ffffff;
+--light:#f4f8fc;
+--gray:#68798b;
+--dark:#071a30;
+
+--shadow:
+0 20px 60px rgba(3,38,80,.13);
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+scroll-behavior:smooth;
+}
+
+
+body{
+
+font-family:
+Arial,
+Helvetica,
+sans-serif;
+
+background:var(--light);
+
+color:var(--dark);
+
+line-height:1.6;
+
+}
+
+
+img{
+max-width:100%;
+display:block;
+}
+
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+
+.container{
+
+width:min(1180px,92%);
+
+margin:auto;
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header{
+
+position:fixed;
+
+top:0;
+left:0;
+right:0;
+
+z-index:1000;
+
+background:
+rgba(255,255,255,.94);
+
+backdrop-filter:
+blur(15px);
+
+border-bottom:
+1px solid rgba(0,0,0,.06);
+
+}
+
+
+.nav{
+
+height:78px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:30px;
+
+}
+
+
+/* LOGO */
+
+.logo{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+font-size:24px;
+
+font-weight:1000;
+
+color:var(--blue);
+
+letter-spacing:-1px;
+
+}
+
+
+.logo-box{
+
+width:42px;
+
+height:42px;
+
+display:grid;
+
+place-items:center;
+
+border-radius:12px;
+
+background:
+linear-gradient(
+135deg,
+var(--blue),
+var(--blue-light)
+);
+
+color:white;
+
+font-size:21px;
+
+box-shadow:
+0 8px 20px rgba(6,59,120,.25);
+
+}
+
+
+.logo span{
+color:var(--blue-light);
+}
+
+
+/* MENU */
+
+nav{
+
+display:flex;
+
+align-items:center;
+
+gap:28px;
+
+}
+
+
+nav a{
+
+font-size:14px;
+
+font-weight:800;
+
+color:var(--dark);
+
+position:relative;
+
+}
+
+
+nav a::after{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+bottom:-7px;
+
+width:0;
+
+height:2px;
+
+background:var(--blue-light);
+
+transition:.25s;
+
+}
+
+
+nav a:hover::after{
+
+width:100%;
+
+}
+
+
+/* PHONE */
+
+.header-phone{
+
+padding:12px 18px;
+
+border-radius:50px;
+
+color:white;
+
+font-weight:900;
+
+font-size:14px;
+
+background:
+linear-gradient(
+135deg,
+var(--blue),
+var(--blue-light)
+);
+
+box-shadow:
+0 8px 22px rgba(6,59,120,.22);
+
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero{
+
+min-height:100vh;
+
+padding-top:78px;
+
+display:flex;
+
+align-items:center;
+
+position:relative;
+
+overflow:hidden;
+
+background:
+
+linear-gradient(
+90deg,
+rgba(2,25,52,.94),
+rgba(3,57,105,.70),
+rgba(4,95,130,.48)
+),
+
+url("accueil.jpg")
+
+center/cover no-repeat;
+
+}
+
+
+.hero::before{
+
+content:"";
+
+position:absolute;
+
+width:600px;
+
+height:600px;
+
+border-radius:50%;
+
+right:-200px;
+
+bottom:-250px;
+
+background:
+rgba(89,216,236,.15);
+
+}
+
+
+.hero-content{
+
+position:relative;
+
+z-index:2;
+
+max-width:780px;
+
+color:white;
+
+padding:80px 0;
+
+}
+
+
+.hero-label{
+
+display:inline-flex;
+
+align-items:center;
+
+gap:9px;
+
+padding:9px 15px;
+
+border-radius:50px;
+
+background:
+rgba(255,255,255,.10);
+
+border:
+1px solid rgba(255,255,255,.25);
+
+font-size:13px;
+
+font-weight:900;
+
+letter-spacing:1px;
+
+}
+
+
+.hero h1{
+
+font-size:
+clamp(48px,8vw,90px);
+
+line-height:.93;
+
+letter-spacing:-4px;
+
+margin:25px 0;
+
+}
+
+
+.hero h1 span{
+
+color:var(--cyan);
+
+}
+
+
+.hero-text{
+
+font-size:
+clamp(18px,2.3vw,22px);
+
+max-width:690px;
+
+color:#e9f8ff;
+
+}
+
+
+.hero-buttons{
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:13px;
+
+margin-top:32px;
+
+}
+
+
+.btn{
+
+min-height:54px;
+
+padding:0 24px;
+
+border-radius:12px;
+
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-weight:900;
+
+transition:.25s;
+
+}
+
+
+.btn:hover{
+
+transform:
+translateY(-3px);
+
+}
+
+
+.btn-primary{
+
+background:
+linear-gradient(
+135deg,
+var(--cyan),
+var(--blue-light)
+);
+
+color:#032c51;
+
+box-shadow:
+0 12px 35px rgba(16,168,209,.25);
+
+}
+
+
+.btn-white{
+
+background:white;
+
+color:var(--blue);
+
+}
+
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+section{
+
+padding:100px 0;
+
+}
+
+
+.section-heading{
+
+text-align:center;
+
+max-width:750px;
+
+margin:
+0 auto 55px;
+
+}
+
+
+.section-heading small{
+
+display:block;
+
+color:var(--blue-light);
+
+font-size:12px;
+
+font-weight:1000;
+
+letter-spacing:3px;
+
+text-transform:uppercase;
+
+margin-bottom:10px;
+
+}
+
+
+.section-heading h2{
+
+font-size:
+clamp(36px,5vw,58px);
+
+line-height:1;
+
+letter-spacing:-2px;
+
+margin-bottom:15px;
+
+}
+
+
+.section-heading p{
+
+color:var(--gray);
+
+font-size:17px;
+
+}
+
+
+/* =====================================================
+   SERVICES
+===================================================== */
+
+.services{
+
+display:grid;
+
+grid-template-columns:
+repeat(3,1fr);
+
+gap:22px;
+
+}
+
+
+.service{
+
+background:white;
+
+border:
+1px solid #e6edf3;
+
+border-radius:25px;
+
+padding:32px;
+
+box-shadow:var(--shadow);
+
+transition:.3s;
+
+}
+
+
+.service:hover{
+
+transform:
+translateY(-8px);
+
+box-shadow:
+0 25px 65px
+rgba(3,38,80,.18);
+
+}
+
+
+.service-icon{
+
+width:62px;
+
+height:62px;
+
+display:grid;
+
+place-items:center;
+
+border-radius:18px;
+
+background:
+linear-gradient(
+135deg,
+#e6faff,
+#f0f9ff
+);
+
+font-size:29px;
+
+margin-bottom:22px;
+
+}
+
+
+.service h3{
+
+font-size:22px;
+
+margin-bottom:10px;
+
+}
+
+
+.service p{
+
+color:var(--gray);
+
+}
+
+
+/* =====================================================
+   STATISTIQUES
+===================================================== */
+
+.stats{
+
+background:
+linear-gradient(
+135deg,
+var(--blue),
+#087cae
+);
+
+color:white;
+
+}
+
+
+.stats-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(4,1fr);
+
+gap:20px;
+
+}
+
+
+.stat{
+
+text-align:center;
+
+padding:25px;
+
+border-right:
+1px solid rgba(255,255,255,.18);
+
+}
+
+
+.stat:last-child{
+
+border-right:0;
+
+}
+
+
+.stat strong{
+
+display:block;
+
+font-size:40px;
+
+color:var(--cyan);
+
+}
+
+
+.stat span{
+
+font-weight:700;
+
+}
+
+
+/* =====================================================
+   AVANT APRES
+===================================================== */
+
+.gallery-section{
+
+background:#edf5fa;
+
+}
+
+
+.before-after{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:25px;
+
+}
+
+
+.photo-card{
+
+background:white;
+
+border-radius:25px;
+
+overflow:hidden;
+
+box-shadow:var(--shadow);
+
+}
+
+
+.photo-header{
+
+padding:17px;
+
+text-align:center;
+
+font-size:19px;
+
+font-weight:1000;
+
+letter-spacing:2px;
+
+}
+
+
+.before{
+
+background:var(--blue);
+
+color:white;
+
+}
+
+
+.after{
+
+background:
+linear-gradient(
+135deg,
+var(--blue-light),
+var(--cyan)
+);
+
+color:#032c51;
+
+}
+
+
+.photo-card img{
+
+width:100%;
+
+height:500px;
+
+object-fit:cover;
+
+}
+
+
+/* =====================================================
+   POURQUOI NOUS
+===================================================== */
+
+.why{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:60px;
+
+align-items:center;
+
+}
+
+
+.why-image{
+
+border-radius:30px;
+
+overflow:hidden;
+
+box-shadow:var(--shadow);
+
+}
+
+
+.why-image img{
+
+width:100%;
+
+height:550px;
+
+object-fit:cover;
+
+}
+
+
+.features{
+
+display:grid;
+
+gap:22px;
+
+}
+
+
+.feature{
+
+display:flex;
+
+gap:17px;
+
+align-items:flex-start;
+
+}
+
+
+.feature-icon{
+
+width:48px;
+
+height:48px;
+
+flex-shrink:0;
+
+display:grid;
+
+place-items:center;
+
+border-radius:14px;
+
+background:#e6f8fc;
+
+font-size:22px;
+
+}
+
+
+.feature h3{
+
+margin-bottom:4px;
+
+}
+
+
+.feature p{
+
+color:var(--gray);
+
+}
+
+
+/* =====================================================
+   CONTACT
+===================================================== */
+
+.contact{
+
+background:
+
+linear-gradient(
+135deg,
+#032650,
+#087fae
+);
+
+color:white;
+
+}
+
+
+.contact-wrapper{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:25px;
+
+}
+
+
+.contact-main,
+.contact-info{
+
+padding:40px;
+
+border-radius:28px;
+
+background:
+rgba(255,255,255,.09);
+
+border:
+1px solid rgba(255,255,255,.18);
+
+}
+
+
+.contact-main h2{
+
+font-size:45px;
+
+line-height:1;
+
+margin-bottom:17px;
+
+}
+
+
+.contact-main p{
+
+color:#d9f4ff;
+
+font-size:17px;
+
+}
+
+
+.contact-buttons{
+
+display:flex;
+
+flex-wrap:wrap;
+
+gap:12px;
+
+margin-top:25px;
+
+}
+
+
+.contact-item{
+
+padding:20px 0;
+
+border-bottom:
+1px solid rgba(255,255,255,.16);
+
+}
+
+
+.contact-item:last-child{
+
+border-bottom:0;
+
+}
+
+
+.contact-item small{
+
+display:block;
+
+color:var(--cyan);
+
+font-weight:900;
+
+margin-bottom:5px;
+
+}
+
+
+.contact-item a:hover{
+
+text-decoration:underline;
+
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer{
+
+background:#021326;
+
+color:#9eb2c5;
+
+text-align:center;
+
+padding:35px 0;
+
+font-size:14px;
+
+}
+
+
+.footer-logo{
+
+color:white;
+
+font-weight:1000;
+
+font-size:22px;
+
+margin-bottom:8px;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:850px){
+
+nav{
+display:none;
+}
+
+.services{
+
+grid-template-columns:1fr;
+
+}
+
+.stats-grid{
+
+grid-template-columns:
+1fr 1fr;
+
+}
+
+.stat{
+
+border-right:0;
+
+border-bottom:
+1px solid rgba(255,255,255,.15);
+
+}
+
+.before-after{
+
+grid-template-columns:1fr;
+
+}
+
+.why{
+
+grid-template-columns:1fr;
+
+}
+
+.contact-wrapper{
+
+grid-template-columns:1fr;
+
+}
+
+.photo-card img{
+
+height:400px;
+
+}
+
+.why-image img{
+
+height:400px;
+
+}
+
+}
+
+
+@media(max-width:500px){
+
+.header-phone{
+
+display:none;
+
+}
+
+section{
+
+padding:75px 0;
+
+}
+
+.hero h1{
+
+letter-spacing:-2px;
+
+}
+
+.hero-buttons .btn,
+.contact-buttons .btn{
+
+width:100%;
+
+}
+
+.stats-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.stat{
+
+border-bottom:
+1px solid rgba(255,255,255,.15);
+
+}
+
+.photo-card img{
+
+height:300px;
+
+}
+
+.contact-main,
+.contact-info{
+
+padding:28px;
+
+}
+
+}
+
 </style>
+
 </head>
+
+
 <body>
 
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
 <header>
+
 <div class="container nav">
-<a class="logo" href="#accueil">
-<div class="logo-box">✦</div>
-<div>MJ.<span>CLEAN</span><br><small style="font-size:10px;letter-spacing:2px">26-07</small></div>
-</a>
-<nav>
-<a href="#accueil">Accueil</a>
-<a href="#services">Services</a>
-<a href="#photos">Photos</a>
-<a href="#contact">Contact</a>
-</nav>
-<a class="header-phone" href="tel:+33640713183">📞 06 40 71 31 83</a>
+
+
+<a
+class="logo"
+href="#accueil"
+>
+
+<div class="logo-box">
+✦
 </div>
+
+<div>
+MJ.<span>CLEAN</span>
+<br>
+
+<small style="
+font-size:10px;
+letter-spacing:2px;
+">
+26-07
+</small>
+
+</div>
+
+</a>
+
+
+<nav>
+
+<a href="#accueil">
+Accueil
+</a>
+
+<a href="#services">
+Services
+</a>
+
+<a href="#photos">
+Photos
+</a>
+
+<a href="#contact">
+Contact
+</a>
+
+</nav>
+
+
+<a
+class="header-phone"
+href="tel:+33640713183"
+>
+
+📞 06 40 71 31 83
+
+</a>
+
+
+</div>
+
 </header>
 
-<section class="hero" id="accueil">
+
+
+<!-- =====================================================
+     ACCUEIL
+===================================================== -->
+
+<section
+class="hero"
+id="accueil"
+>
+
 <div class="container">
+
 <div class="hero-content">
-<div class="hero-label">✓ PARTICULIERS & PROFESSIONNELS</div>
-<h1>MJ.<span>CLEAN</span><br>26-07</h1>
-<p class="hero-text">Multiservices, nettoyage et débarras à Valence et alentours. Un service sérieux, propre et efficace pour vos maisons, locaux et espaces professionnels.</p>
+
+
+<div class="hero-label">
+
+✓ PARTICULIERS & PROFESSIONNELS
+
+</div>
+
+
+<h1>
+
+MJ.<span>CLEAN</span>
+
+<br>
+
+26-07
+
+</h1>
+
+
+<p class="hero-text">
+
+Multiservices, nettoyage et débarras
+à Valence et alentours.
+
+Un service sérieux, propre et efficace
+pour vos maisons, locaux et espaces professionnels.
+
+</p>
+
+
 <div class="hero-buttons">
-<a class="btn btn-primary" href="#contact">📞 Demander un devis</a>
-<a class="btn btn-white" href="#photos">📸 Voir nos réalisations</a>
+
+
+<a
+class="btn btn-primary"
+href="#contact"
+>
+
+📞 Demander un devis
+
+</a>
+
+
+<a
+class="btn btn-white"
+href="#photos"
+>
+
+📸 Voir nos réalisations
+
+</a>
+
+
 </div>
+
+
 </div>
+
 </div>
+
 </section>
+
+
+
+<!-- =====================================================
+     SERVICES
+===================================================== -->
 
 <section id="services">
+
 <div class="container">
+
+
 <div class="section-heading">
-<small>Nos services</small>
-<h2>Une solution pour vos besoins</h2>
-<p>MJ.CLEAN 26-07 vous accompagne pour vos travaux de nettoyage, débarras et multiservices.</p>
+
+<small>
+Nos services
+</small>
+
+<h2>
+Une solution pour vos besoins
+</h2>
+
+<p>
+MJ.CLEAN 26-07 vous accompagne pour vos travaux
+de nettoyage, débarras et multiservices.
+</p>
+
 </div>
+
+
+
 <div class="services">
-<div class="service"><div class="service-icon">🧹</div><h3>Nettoyage</h3><p>Entretien et nettoyage de vos espaces pour un résultat propre et soigné.</p></div>
-<div class="service"><div class="service-icon">🚛</div><h3>Débarras</h3><p>Débarras de maisons, garages, locaux et différents espaces.</p></div>
-<div class="service"><div class="service-icon">✨</div><h3>Multiservices</h3><p>Une prestation polyvalente adaptée aux besoins des particuliers et professionnels.</p></div>
+
+
+<div class="service">
+
+<div class="service-icon">
+🧹
 </div>
+
+<h3>
+Nettoyage
+</h3>
+
+<p>
+Entretien et nettoyage de vos espaces
+pour un résultat propre et soigné.
+</p>
+
 </div>
+
+
+
+<div class="service">
+
+<div class="service-icon">
+🚛
+</div>
+
+<h3>
+Débarras
+</h3>
+
+<p>
+Débarras de maisons, garages,
+locaux et différents espaces.
+</p>
+
+</div>
+
+
+
+<div class="service">
+
+<div class="service-icon">
+✨
+</div>
+
+<h3>
+Multiservices
+</h3>
+
+<p>
+Une prestation polyvalente adaptée
+aux besoins des particuliers et professionnels.
+</p>
+
+</div>
+
+
+</div>
+
+</div>
+
 </section>
+
+
+
+<!-- =====================================================
+     STATS
+===================================================== -->
 
 <section class="stats">
+
 <div class="container">
+
 <div class="stats-grid">
-<div class="stat"><strong>100%</strong><span>Sérieux</span></div>
-<div class="stat"><strong>24/7</strong><span>Prise de contact</span></div>
-<div class="stat"><strong>2</strong><span>Types de clients</span></div>
-<div class="stat"><strong>📍</strong><span>Valence & alentours</span></div>
+
+
+<div class="stat">
+
+<strong>
+100%
+</strong>
+
+<span>
+Sérieux
+</span>
+
 </div>
+
+
+<div class="stat">
+
+<strong>
+24/7
+</strong>
+
+<span>
+Prise de contact
+</span>
+
 </div>
+
+
+<div class="stat">
+
+<strong>
+2
+</strong>
+
+<span>
+Types de clients
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<strong>
+📍
+</strong>
+
+<span>
+Valence & alentours
+</span>
+
+</div>
+
+
+</div>
+
+</div>
+
 </section>
 
-<section class="gallery-section" id="photos">
+
+
+<!-- =====================================================
+     PHOTOS AVANT / APRES
+===================================================== -->
+
+<section
+class="gallery-section"
+id="photos"
+>
+
 <div class="container">
+
+
 <div class="section-heading">
-<small>Nos réalisations</small>
-<h2>Avant / Après</h2>
-<p>Retrouvez ici les photos que vous avez fournies pour présenter vos réalisations.</p>
+
+<small>
+Nos réalisations
+</small>
+
+<h2>
+Avant / Après
+</h2>
+
+<p>
+Découvrez notre présentation avant et après intervention.
+</p>
+
 </div>
+
+
 
 <div class="before-after">
 
-<div class="photo-card">
-<div class="photo-header before">AVANT</div>
-<img src="{before_after_img}" alt="Photo avant - MJ.CLEAN">
-<div class="photo-note">Exemple de réalisation MJ.CLEAN 26-07</div>
-</div>
 
 <div class="photo-card">
-<div class="photo-header after">APRÈS</div>
-<img src="{before_after_img}" alt="Photo après - MJ.CLEAN">
-<div class="photo-note">Résultat présenté dans votre photo</div>
+
+<div class="photo-header before">
+AVANT
 </div>
+
+<img
+src="avant-apres.jpg"
+alt="Avant intervention MJ.CLEAN"
+>
 
 </div>
 
-<div style="text-align:center;margin-top:35px">
-<a class="btn btn-primary" href="#contact">📞 Demander un devis</a>
+
+
+<div class="photo-card">
+
+<div class="photo-header after">
+APRÈS
 </div>
+
+<img
+src="avant-apres.jpg"
+alt="Après intervention MJ.CLEAN"
+>
+
 </div>
+
+
+</div>
+
+
+<div style="
+text-align:center;
+margin-top:35px;
+">
+
+<a
+class="btn btn-primary"
+href="#contact"
+>
+
+📞 Demander un devis
+
+</a>
+
+</div>
+
+
+</div>
+
 </section>
+
+
+
+<!-- =====================================================
+     POURQUOI NOUS
+===================================================== -->
 
 <section>
+
 <div class="container">
+
+
 <div class="why">
+
+
 <div class="why-image">
-<img src="{hero_img}" alt="MJ.CLEAN 26-07">
+
+<img
+src="accueil.jpg"
+alt="MJ.CLEAN 26-07"
+>
+
 </div>
+
+
+
 <div>
-<div class="section-heading" style="text-align:left;margin:0 0 35px">
-<small>Pourquoi MJ.CLEAN ?</small>
-<h2>Un service professionnel</h2>
-<p>Notre objectif est de vous proposer une intervention sérieuse et adaptée à votre besoin.</p>
+
+
+<div class="section-heading"
+style="
+text-align:left;
+margin:0 0 35px;
+">
+
+<small>
+Pourquoi MJ.CLEAN ?
+</small>
+
+<h2>
+Un service professionnel
+</h2>
+
+<p>
+Notre objectif est de vous proposer
+une intervention sérieuse et adaptée
+à votre besoin.
+</p>
+
 </div>
+
+
+
 <div class="features">
-<div class="feature"><div class="feature-icon">✓</div><div><h3>Travail soigné</h3><p>Nous accordons de l'importance aux détails et à la qualité du résultat.</p></div></div>
-<div class="feature"><div class="feature-icon">⚡</div><div><h3>Réactivité</h3><p>Contactez-nous pour discuter rapidement de votre projet.</p></div></div>
-<div class="feature"><div class="feature-icon">🤝</div><div><h3>Particuliers & professionnels</h3><p>Nous intervenons pour différents types de besoins.</p></div></div>
+
+
+<div class="feature">
+
+<div class="feature-icon">
+✓
 </div>
+
+<div>
+
+<h3>
+Travail soigné
+</h3>
+
+<p>
+Nous accordons de l'importance
+aux détails et à la qualité du résultat.
+</p>
+
 </div>
+
 </div>
+
+
+
+<div class="feature">
+
+<div class="feature-icon">
+⚡
 </div>
+
+<div>
+
+<h3>
+Réactivité
+</h3>
+
+<p>
+Contactez-nous pour discuter
+rapidement de votre projet.
+</p>
+
+</div>
+
+</div>
+
+
+
+<div class="feature">
+
+<div class="feature-icon">
+🤝
+</div>
+
+<div>
+
+<h3>
+Particuliers & professionnels
+</h3>
+
+<p>
+Nous intervenons pour différents
+types de besoins.
+</p>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </section>
 
-<section class="contact" id="contact">
+
+
+<!-- =====================================================
+     CONTACT
+===================================================== -->
+
+<section
+class="contact"
+id="contact"
+>
+
 <div class="container">
+
+
 <div class="contact-wrapper">
+
+
 <div class="contact-main">
-<h2>Besoin d'un devis ?</h2>
-<p>Contactez MJ.CLEAN 26-07 pour obtenir des renseignements ou demander un devis.</p>
+
+
+<h2>
+Besoin d'un devis ?
+</h2>
+
+
+<p>
+
+Contactez MJ.CLEAN 26-07
+pour obtenir des renseignements
+ou demander un devis.
+
+</p>
+
+
 <div class="contact-buttons">
-<a class="btn btn-primary" href="tel:+33640713183">📞 Appeler</a>
-<a class="btn btn-white" href="mailto:Mijmoh86@gmail.com">✉️ Envoyer un email</a>
+
+
+<a
+class="btn btn-primary"
+href="tel:+33640713183"
+>
+
+📞 Appeler
+
+</a>
+
+
+<a
+class="btn btn-white"
+href="mailto:Mijmoh86@gmail.com"
+>
+
+✉️ Envoyer un email
+
+</a>
+
+
 </div>
+
+
 </div>
+
+
+
 <div class="contact-info">
-<div class="contact-item"><small>📞 TÉLÉPHONE</small><a href="tel:+33640713183">06 40 71 31 83</a></div>
-<div class="contact-item"><small>✉️ EMAIL</small><a href="mailto:Mijmoh86@gmail.com">Mijmoh86@gmail.com</a></div>
-<div class="contact-item"><small>📍 ADRESSE</small>28A avenue de l'Yser<br>26000 Valence</div>
-<div class="contact-item"><small>🕐 DEVIS</small>Contactez-nous pour connaître nos disponibilités.</div>
+
+
+<div class="contact-item">
+
+<small>
+📞 TÉLÉPHONE
+</small>
+
+<a href="tel:+33640713183">
+
+06 40 71 31 83
+
+</a>
+
 </div>
+
+
+
+<div class="contact-item">
+
+<small>
+✉️ EMAIL
+</small>
+
+<a href="mailto:Mijmoh86@gmail.com">
+
+Mijmoh86@gmail.com
+
+</a>
+
 </div>
+
+
+
+<div class="contact-item">
+
+<small>
+📍 ADRESSE
+</small>
+
+28A avenue de l'Yser
+
+<br>
+
+26000 Valence
+
 </div>
+
+
+
+<div class="contact-item">
+
+<small>
+🕐 DEVIS
+</small>
+
+Contactez-nous pour
+connaître nos disponibilités.
+
+</div>
+
+
+</div>
+
+
+</div>
+
+</div>
+
 </section>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 
 <footer>
+
 <div class="container">
-<strong style="font-size:22px;color:white">MJ.CLEAN 26-07</strong><br>
-Multiservices · Nettoyage · Débarras<br><br>
-📍 28A avenue de l'Yser, 26000 Valence<br>
-📞 06 40 71 31 83<br>
-✉️ Mijmoh86@gmail.com<br><br>
-© 2026 MJ.CLEAN 26-07 — Tous droits réservés.
+
+<div class="footer-logo">
+
+MJ.CLEAN 26-07
+
 </div>
+
+Multiservices · Nettoyage · Débarras
+
+<br><br>
+
+📍 28A avenue de l'Yser, 26000 Valence
+
+<br>
+
+📞 06 40 71 31 83
+
+<br>
+
+✉️ Mijmoh86@gmail.com
+
+<br><br>
+
+© 2026 MJ.CLEAN 26-07 — Tous droits réservés.
+
+</div>
+
 </footer>
 
+
 </body>
+
 </html>
-'''
-
-(out / "index.html").write_text(html, encoding="utf-8")
-
-zip_path = Path("/mnt/data/MJ-CLEAN-26-07-site-corrige.zip")
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-    for f in out.iterdir():
-        z.write(f, f.name)
-
-print("Version corrigée créée.")
-print(f"HTML : {out/'index.html'}")
-print(f"ZIP : {zip_path}")
