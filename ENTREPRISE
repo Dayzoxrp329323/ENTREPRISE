@@ -683,7 +683,6 @@ font-weight:700;
 }
 
 
-
 /* =====================================================
    POURQUOI NOUS
 ===================================================== */
@@ -960,12 +959,6 @@ border-bottom:
 
 }
 
-.before-after{
-
-grid-template-columns:1fr;
-
-}
-
 .why{
 
 grid-template-columns:1fr;
@@ -975,12 +968,6 @@ grid-template-columns:1fr;
 .contact-wrapper{
 
 grid-template-columns:1fr;
-
-}
-
-.photo-card img{
-
-height:400px;
 
 }
 
@@ -1030,12 +1017,6 @@ grid-template-columns:1fr;
 
 border-bottom:
 1px solid rgba(255,255,255,.15);
-
-}
-
-.photo-card img{
-
-height:300px;
 
 }
 
@@ -1098,10 +1079,6 @@ Accueil
 
 <a href="#services">
 Services
-</a>
-
-<a href="#photos">
-Photos
 </a>
 
 <a href="#contact">
@@ -1179,16 +1156,6 @@ href="#contact"
 >
 
 📞 Demander un devis
-
-</a>
-
-
-<a
-class="btn btn-white"
-href="#photos"
->
-
-📸 Voir nos réalisations
 
 </a>
 
@@ -1300,7 +1267,7 @@ aux besoins des particuliers et professionnels.
 
 
 <!-- =====================================================
-     STATS
+     STATISTIQUES
 ===================================================== -->
 
 <section class="stats">
@@ -1363,101 +1330,6 @@ Valence & alentours
 
 
 </div>
-
-</div>
-
-</section>
-
-
-
-<!-- =====================================================
-     PHOTOS AVANT / APRÈS
-===================================================== -->
-
-<section
-class="gallery-section"
-id="photos"
->
-
-<div class="container">
-
-
-<div class="section-heading">
-
-<small>
-Nos réalisations
-</small>
-
-<h2>
-Avant / Après
-</h2>
-
-<p>
-Découvrez la différence avant et après notre intervention.
-</p>
-
-</div>
-
-
-
-<div class="before-after">
-
-
-<!-- PHOTO AVANT -->
-
-<div class="photo-card">
-
-<div class="photo-header before">
-AVANT
-</div>
-
-<img
-src="piscine-avant.jpg"
-alt="Piscine avant nettoyage par MJ.CLEAN 26-07"
-loading="lazy"
->
-
-</div>
-
-
-
-<!-- PHOTO APRÈS -->
-
-<div class="photo-card">
-
-<div class="photo-header after">
-APRÈS
-</div>
-
-<img
-src="piscine-apres.jpg"
-alt="Piscine après nettoyage par MJ.CLEAN 26-07"
-loading="lazy"
->
-
-</div>
-
-
-</div>
-
-
-
-<div style="
-text-align:center;
-margin-top:35px;
-">
-
-<a
-class="btn btn-primary"
-href="#contact"
->
-
-📞 Demander un devis
-
-</a>
-
-</div>
-
 
 </div>
 
